@@ -1,43 +1,50 @@
 # skills
 
-My personal collection of [Claude Code](https://claude.com/claude-code) agent skills — the source of truth for skills I develop and use day to day.
+A collection of [Claude Code](https://claude.com/claude-code) agent skills I build and use day to day, shared publicly in case they're useful to you too.
 
-## Layout
+Skills extend Claude Code with reusable, model-invocable workflows. Each one lives in its own folder with a `SKILL.md` that tells Claude when and how to use it.
 
-Skills are grouped into category folders, one skill per folder (each folder holds a `SKILL.md`):
+## What's here
 
-```
-productivity/
-  update-changelog/     # Generate CHANGELOG.md from git history
-release/
-  jira-release/         # Full Gitflow release lifecycle: /release <version>
-```
+| Skill | What it does |
+|-------|--------------|
+| [`productivity/update-changelog`](productivity/update-changelog) | Generate or update `CHANGELOG.md` from your git history |
+| [`release/jira-release`](release/jira-release) | Full Gitflow release lifecycle in one command: `/release <version>` — RC vs. direct-release detection, Jira lookup, changelog, version bump, and PR creation |
 
-## Installing / syncing
+## Using these skills
 
-This repo is the source of truth. To use the skills locally, symlink each one into
-your Claude skills directory (`~/.claude/skills/`):
+Clone the repo, then symlink the skills into your Claude skills directory (`~/.claude/skills/`):
 
 ```bash
+git clone https://github.com/<your-username>/skills.git
+cd skills
 ./link-skills.sh
 ```
 
-The script symlinks every `SKILL.md` folder it finds into `~/.claude/skills/`, so
-edits here take effect live — no copy step, no drift. It's idempotent (safe to
-re-run) and never clobbers a real (non-symlink) entry already in the target dir.
+`link-skills.sh` symlinks every `SKILL.md` folder it finds into `~/.claude/skills/`,
+so the skills become available the next time you start Claude Code. The script is
+idempotent (safe to re-run) and never overwrites a real (non-symlink) entry already
+in your skills directory.
 
-Custom target directory:
+Prefer not to symlink? Just copy the skill folder you want into `~/.claude/skills/`
+manually — each folder is self-contained.
+
+Custom skills directory:
 
 ```bash
 CLAUDE_SKILLS_DIR=/some/other/path ./link-skills.sh
 ```
 
-> Symlinks are a local install detail — they don't survive `git clone` as live
-> links. On a new machine, clone the repo and re-run `./link-skills.sh`.
+## Notes
 
-## Adding a new skill
+- **`jira-release`** is configuration-driven: it reads `JIRA_PROJECT_KEY` and
+  `JIRA_BASE_URL` from your project's `CLAUDE.md` (or asks for them at runtime).
+  Nothing is hardcoded — point it at your own Jira instance.
+- These skills follow [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/)
+  and [Conventional Commits](https://www.conventionalcommits.org/) conventions. Adapt
+  them to your own workflow as needed.
 
-1. Create `category/skill-name/SKILL.md` (use the `skill-creator` or
-   `superpowers:writing-skills` skill to scaffold it).
-2. Run `./link-skills.sh` to link it into `~/.claude/skills/`.
-3. Commit and push.
+## License
+
+Use them, fork them, adapt them. No warranty — these are tools I built for my own
+workflow and share as-is.
